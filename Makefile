@@ -219,6 +219,28 @@ $(TAIR_REGR_MAPS_NC): $(AGGLOM_EXTENT_SHP) $(STATION_TAIR_CSV) \
 		$(REGRESSOR_JOBLIB) $@
 tair_regr_maps: $(TAIR_REGR_MAPS_NC)
 
+#################################################################################
+# InVEST urban cooling model
+
+CODE_INVEST_DIR := $(CODE_DIR)/invest
+
+## 0. Some code that we need for all the experiments
+### variables
+DATA_INVEST_DIR := $(DATA_INTERIM_DIR)/invest
+REF_ET_NC := $(DATA_INVEST_DIR)/ref-et.nc
+#### code
+MAKE_REF_ET_PY := $(CODE_INVEST_DIR)/make_ref_et.py
+
+### rules
+$(DATA_INVEST_DIR): | $(DATA_INTERIM_DIR)
+	mkdir $@
+$(REF_ET_NC): $(AGGLOM_LULC_TIF) $(AGGLOM_EXTENT_SHP) $(STATION_TAIR_CSV) \
+	$(MAKE_REF_ET_PY) | $(DATA_INVEST_DIR)
+	python $(MAKE_REF_ET_PY) $(AGGLOM_LULC_TIF) $(AGGLOM_EXTENT_SHP) \
+		$(STATION_TAIR_CSV) $@
+ref_et: $(REF_ET_NC)
+
+
 
 
 #################################################################################

@@ -1,0 +1,44 @@
+name: uhi
+channels:
+  - conda-forge
+dependencies:
+  - pip
+  - make
+  - notebook 
+  - pip:
+    - -e .
+    - flake8-isort==2.7.0
+    - natcap.invest==3.8.1
+    - git+https://github.com/woodcrafty/PyETo.git@0b7ac9f149f4c89c5b5759a875010c521aa07f0f
+    - invest-ucm-calibration==0.3.1
+    - pylandsat==0.2
+    - salem==0.2.4
+    - git+https://github.com/martibosch/swiss-uhi-utils.git@0e26f08371fc2e23e130f6f5612b4ce6990f3d60
+  - setuptools
+  - wheel
+  - click
+  - sphinx
+  - coverage
+  - flake8
+  - awscli  
+  - python-dotenv>=0.5.1
+  - python=3.7
+  - ipykernel
+  - boto3
+  - tqdm
+  - numpy<1.17  # because of laspy
+  - gdal<3.0a
+  - pandas<1.1  
+  - geopandas<0.7  # because of salem
+  - rasterio
+  - xlrd
+  - xarray
+  - netcdf4
+  - scikit-learn=0.22.1  # better algorithm default args
+  - descartes
+  - contextily
+  - seaborn
+  - statsmodels
+  - s3fs  
+  - fsspec
+  - dask

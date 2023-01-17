@@ -1,16 +1,13 @@
 import logging
 import os
 from os import path
-
 import click
 import geopandas as gpd
 import pandas as pd
 import swiss_uhi_utils as suhi
 import xarray as xr
-
 from lausanne_heat_islands import settings, utils
-
-
+#
 @click.command()
 @click.argument('landsat_tiles_filepath', type=click.Path(exists=True))
 @click.argument('agglom_extent_filepath', type=click.Path(exists=True))
@@ -27,7 +24,8 @@ def main(landsat_tiles_filepath, agglom_extent_filepath, dst_filepath,
     agglom_extent_gdf = gpd.read_file(agglom_extent_filepath)
     crs = agglom_extent_gdf.crs
     ref_geom = agglom_extent_gdf.loc[0]['geometry'].buffer(buffer_dist)
-    lake_geom = agglom_extent_gdf.loc[1]['geometry']
+    # rb we do not have the lake in our example
+    #lake_geom = agglom_extent_gdf.loc[1]['geometry']
 
     # process the list of tiles
     datasets = []
@@ -35,7 +33,7 @@ def main(landsat_tiles_filepath, agglom_extent_filepath, dst_filepath,
     # iteration and use it to align the datasets of further iterations
     landsat_features_kws = dict(landsat_features=['lst', 'ndwi'],
                                 ref_geom=ref_geom,
-                                water_bodies_geom=lake_geom,
+                                water_bodies_geom=None,
                                 crs=crs)
     ref_ds = suhi.get_landsat_features_ds(landsat_tiles[0],
                                           **landsat_features_kws)

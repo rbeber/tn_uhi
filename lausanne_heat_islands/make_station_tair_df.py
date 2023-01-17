@@ -27,59 +27,62 @@ def main(landsat_tiles_filepath, station_data_dir, dst_filepath, hour):
     # calibration_datetimes = [
     #     calibration_date + HOUR_TD for calibration_date in calibration_dates
     # ]
-    # get landsat dates
-    landsat_dates = [
-        pylandsat_utils.meta_from_pid(landsat_tile)['acquisition_date']
-        for landsat_tile in pd.read_csv(landsat_tiles_filepath, header=None)[0]
-    ]
+    # # get landsat dates
+    # landsat_dates = [
+    #     pylandsat_utils.meta_from_pid(landsat_tile)['acquisition_date']
+    #     for landsat_tile in pd.read_csv(landsat_tiles_filepath, header=None)[0]
+    # ]
 
-    # for each date, get the datetime for the hour for which we want to get
-    # the temperature
-    hour_td = datetime.timedelta(hours=hour)
-    landsat_datetimes = [
-        landsat_date + hour_td for landsat_date in landsat_dates
-    ]
+    # # for each date, get the datetime for the hour for which we want to get
+    # # the temperature
+    # hour_td = datetime.timedelta(hours=hour)
+    # landsat_datetimes = [
+    #     landsat_date + hour_td for landsat_date in landsat_dates
+    # ]
 
-    # assemble a data frame of station temperature measurements
-    dfs = []
+    # # assemble a data frame of station temperature measurements
+    # dfs = []
 
-    # 1. MeteoSwiss
-    for tair_column in ['tre000s0', 'tre200s0']:
-        dfs.append(
-            suhi.df_from_meteoswiss_zip(
-                path.join(station_data_dir,
-                          f'meteoswiss-lausanne-{tair_column}.zip'),
-                tair_column).loc[landsat_datetimes].reset_index().groupby(
-                    'time').first())
+    # # 1. MeteoSwiss
+    # for tair_column in ['tre000s0', 'tre200s0']:
+    #     dfs.append(
+    #         suhi.df_from_meteoswiss_zip(
+    #             path.join(station_data_dir,
+    #                       f'meteoswiss-lausanne-{tair_column}.zip'),
+    #             tair_column).loc[landsat_datetimes].reset_index().groupby(
+    #                 'time').first())
 
-    # 2. VaudAir
-    vaudair_df = pd.read_excel(path.join(
-        station_data_dir,
-        'VaudAir_EnvoiTemp20180101-20200128_EPFL_20200129.xlsx'),
-                               index_col=0)
-    vaudair_df = vaudair_df.iloc[3:]
-    vaudair_df.index = pd.to_datetime(vaudair_df.index)
-    for column in vaudair_df.columns:
-        vaudair_df[column] = pd.to_numeric(vaudair_df[column])
+    # # 2. VaudAir
+    # vaudair_df = pd.read_excel(path.join(
+    #     station_data_dir,
+    #     'VaudAir_EnvoiTemp20180101-20200128_EPFL_20200129.xlsx'),
+    #                            index_col=0)
+    # vaudair_df = vaudair_df.iloc[3:]
+    # vaudair_df.index = pd.to_datetime(vaudair_df.index)
+    # for column in vaudair_df.columns:
+    #     vaudair_df[column] = pd.to_numeric(vaudair_df[column])
 
-    dfs.append(vaudair_df.loc[landsat_datetimes])
+    # dfs.append(vaudair_df.loc[landsat_datetimes])
 
-    # 3. Agrometeo
-    dfs.append(
-        suhi.df_from_agrometeo(
-            path.join(station_data_dir,
-                      'agrometeo-tre200s0.csv')).loc[landsat_datetimes])
+    # # 3. Agrometeo
+    # dfs.append(
+    #     suhi.df_from_agrometeo(
+    #         path.join(station_data_dir,
+    #                   'agrometeo-tre200s0.csv')).loc[landsat_datetimes])
 
-    # 4. WSL
-    dfs.append(
-        suhi.df_from_wsl(path.join(station_data_dir, 'WSLLAF.txt'),
-                         'WSLLAF').loc[landsat_datetimes])
+    # # 4. WSL
+    # dfs.append(
+    #     suhi.df_from_wsl(path.join(station_data_dir, 'WSLLAF.txt'),
+    #                      'WSLLAF').loc[landsat_datetimes])
 
-    # assemble the dataframe
-    df = pd.concat(dfs, axis=1)
-    # keep only the dates in the index
-    df.index = pd.Series(df.index).dt.date
-    # dump it (need to dump the index in this case)
+    # # assemble the dataframe
+    # df = pd.concat(dfs, axis=1)
+    # # keep only the dates in the index
+    # df.index = pd.Series(df.index).dt.date
+    # # dump it (need to dump the index in this case)
+    # df.to_csv(dst_filepath)
+    # use pre-prepared dataset
+    df = pd.read_csv('data/interim/station-tair.csv')
     df.to_csv(dst_filepath)
     logger.info("dumped air temperature station measurements to %s",
                 dst_filepath)

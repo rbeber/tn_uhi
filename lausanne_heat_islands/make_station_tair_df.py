@@ -82,8 +82,9 @@ def main(landsat_tiles_filepath, station_data_dir, dst_filepath, hour):
     # # dump it (need to dump the index in this case)
     # df.to_csv(dst_filepath)
     # use pre-prepared dataset
-    df = pd.read_csv('data/interim/station-tair.csv')
-    df.to_csv(dst_filepath)
+    ##rb df = pd.read_csv('data/interim/station-tair.csv')
+    ##rb df.to_csv(dst_filepath)
+    print('BY HAND FOR NOW')
     logger.info("dumped air temperature station measurements to %s",
                 dst_filepath)
 

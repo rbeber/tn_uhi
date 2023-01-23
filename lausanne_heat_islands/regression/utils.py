@@ -1,7 +1,7 @@
 import numpy as np
 
 LANDSAT_RES = 30
-LANDSAT_BASE_FEATURES = ['lst', 'ndwi']
+LANDSAT_BASE_FEATURES = ['LST', 'NDVI']
 AVERAGING_RADII = [0, 200, 400, 600, 800]
 LANDSAT_FEATURES = [
     f'{base_feature}_{averaging_radius}'

@@ -12,7 +12,7 @@ import xarray as xr
 from rasterio import transform
 
 # Swiss CRS
-CRS = 'epsg:2056'
+CRS = 'epsg:32632'
 
 # PLOTS
 # ugly hardcoded for the legend of the error classes in map `plot_T_maps`

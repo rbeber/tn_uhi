@@ -60,6 +60,9 @@ def main(agglom_extent_filepath, station_tair_filepath,
     # 0. Preprocess the inputs
     # get the agglomeration extent
     agglom_extent_gdf = gpd.read_file(agglom_extent_filepath)
+    #just to be sure reproject agglom_extent_gdf from 4326 to 32632
+    #rb added
+    agglom_extent_gdf = agglom_extent_gdf.to_crs('EPSG:32632')
     crs = agglom_extent_gdf.crs
     data_geom = agglom_extent_gdf.loc[0]['geometry']
     # add a buffer to compute the convolution features well
@@ -102,6 +105,8 @@ def main(agglom_extent_filepath, station_tair_filepath,
     # with fs_s3.open(dem_s3_filepath) as dem_file_obj:
     # dem_da = utils.salem_da_from_singleband(swiss_dem_filepath)
     dem_da = salem.open_xr_dataset(swiss_dem_filepath)['data']
+    #rb set prper epsg for now
+    dem_da.attrs['pyproj_srs'] = 'epsg:32632'
     # align it
     dem_arr = landsat_features_ds.salem.transform(dem_da,
                                                   interp='linear').values
@@ -109,6 +114,9 @@ def main(agglom_extent_filepath, station_tair_filepath,
     # 2. Use the trained regressor to predict the air temperature at the
     #    target resolution
     regr = jl.load(regressor_filepath)
+    #rb apparently date.index was named ='date' by pandas and not allowing use in xarray
+    # try this fix
+    date_ser.index.name = 'time'
     T_pred_da = xr.DataArray(
         [
             predict_T(regr, landsat_features_ds.sel(time=date), dem_arr)

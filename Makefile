@@ -190,7 +190,7 @@ DHM200_DIR := $(DATA_RAW_DIR)/dhm200
 DHM200_URI = \
 	https://data.geo.admin.ch/ch.swisstopo.digitales-hoehenmodell_25/data.zip
 DHM200_ASC := $(DHM200_DIR)/DHM200.asc
-SWISS_DEM_TIF := $(DATA_INTERIM_DIR)/swiss-dem.tif
+SWISS_DEM_TIF := $(DATA_INTERIM_DIR)/Merged_rprj_ALOS_DEM.tif
 #### predicted air temperature data array
 TAIR_REGR_MAPS_NC := $(DATA_PROCESSED_DIR)/tair-regr-maps.nc
 #### code
@@ -206,11 +206,12 @@ $(DHM200_DIR)/%.asc: $(DHM200_DIR)/%.zip
 	touch $@
 #### reproject ASCII grid. See https://bit.ly/2WEBxoL
 TEMP_VRT := $(DATA_INTERIM_DIR)/temp.vrt
-$(SWISS_DEM_TIF): $(DHM200_ASC)
-	gdalwarp -s_srs EPSG:21781 -t_srs $(CRS) -of vrt $< $(TEMP_VRT)
-	gdal_translate -of GTiff $(TEMP_VRT) $@
-	rm $(TEMP_VRT)
-swiss_dem: $(SWISS_DEM_TIF)
+#commented since reprj by hand for now
+# $(SWISS_DEM_TIF): $(DHM200_ASC)
+# 	gdalwarp -s_srs EPSG:21781 -t_srs $(CRS) -of vrt $< $(TEMP_VRT)
+# 	gdal_translate -of GTiff $(TEMP_VRT) $@
+# 	rm $(TEMP_VRT)
+# swiss_dem: $(SWISS_DEM_TIF)
 $(TAIR_REGR_MAPS_NC): $(AGGLOM_EXTENT_SHP) $(STATION_TAIR_CSV) \
 	$(LANDSAT_FEATURES_NC) $(SWISS_DEM_TIF) $(REGRESSOR_JOBLIB) \
 	$(MAKE_TAIR_REGR_MAPS_PY) | $(DATA_PROCESSED_DIR)

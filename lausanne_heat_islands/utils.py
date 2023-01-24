@@ -11,7 +11,7 @@ from sklearn import metrics
 import xarray as xr
 from rasterio import transform
 
-# Swiss CRS
+# TN CRS
 CRS = 'epsg:32632'
 
 # PLOTS

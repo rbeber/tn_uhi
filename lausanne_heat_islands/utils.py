@@ -87,6 +87,7 @@ def plot_T_maps(T_da,
         #     'pad': 0.02,
         # }
         add_colorbar=False,
+        figsize = (20,40),
         **plot_kws)
 
     # post-processing
@@ -116,6 +117,12 @@ def plot_T_maps(T_da,
         # set black edge color for markers
         plt.rcParams.update(**{'scatter.edgecolors': 'k'})
 
+        # try quick fix
+        #rb: to be solved
+        #print(err_gdf)
+        #print(err_gdf.index)
+        err_gdf.drop(['date'],axis = 1, inplace = True )  
+        #print(err_gdf)
         # plot the stations
         for (_, date_gdf), ax in zip(err_gdf.groupby('date'), flat_axes):
             date_gdf.plot(column='err_class', ax=ax, cmap=cmap)
@@ -152,7 +159,7 @@ def plot_T_maps(T_da,
                      boundaries=ERR_BOUNDARIES)
 
     # g.add_colorbar()
-    fig.subplots_adjust(hspace=-.5)
+    fig.subplots_adjust(hspace=0.5)
     # fig.savefig('../reports/figures/spatial-regression-maps.png')
     return g
 

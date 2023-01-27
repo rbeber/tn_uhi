@@ -87,7 +87,7 @@ def plot_T_maps(T_da,
         #     'pad': 0.02,
         # }
         add_colorbar=False,
-        figsize = (20,40),
+        figsize = (10  ,20),
         **plot_kws)
 
     # post-processing

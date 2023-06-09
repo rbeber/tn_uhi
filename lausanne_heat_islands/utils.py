@@ -7,6 +7,7 @@ from matplotlib import colors
 from shapely import geometry
 from sklearn import metrics
 
+import matplotlib as mpl
 
 import xarray as xr
 from rasterio import transform
@@ -16,9 +17,9 @@ CRS = 'epsg:32632'
 
 # PLOTS
 # ugly hardcoded for the legend of the error classes in map `plot_T_maps`
-ERR_CLASSES = [-5, -3, -1, 1, 3, 5]  # station markers
+ERR_CLASSES = [-1.5, -1.0, -0.5, 0.5, 1.0, 1.5]  # station markers
 ERR_BOUNDARIES = [-12, -6, -2, 2, 6, 12]  # map pixels
-
+print('abba')
 
 def plot_pred_obs(comparison_df):
     fig, ax = plt.subplots()
@@ -68,10 +69,21 @@ def plot_err_elev_obs(comparison_df):
 
     return fig
 
+def colorbar(mappable):
+    from mpl_toolkits.axes_grid1 import make_axes_locatable
+    import matplotlib.pyplot as plt
+    last_axes = plt.gca()
+    ax = mappable.axes
+    fig = ax.figure
+    divider = make_axes_locatable(ax)
+    cax = divider.append_axes("right", size="5%", pad=0.05)
+    cbar = fig.colorbar(mappable, cax=cax)
+    plt.sca(last_axes)
+    return cbar
 
 def plot_T_maps(T_da,
                 station_location_df,
-                num_cols=3,
+                num_cols=6,
                 comparison_df=None,
                 err_classes=None,
                 **plot_kws):
@@ -87,7 +99,7 @@ def plot_T_maps(T_da,
         #     'pad': 0.02,
         # }
         add_colorbar=False,
-        figsize = (10  ,20),
+        figsize = (14  ,10),
         **plot_kws)
 
     # post-processing
@@ -135,10 +147,32 @@ def plot_T_maps(T_da,
             loc='center',
             facecolor='white',
             title='Regression error $\hat{T} - T_{obs}$ [$\degree$C]')
+            #title='Regression error $\hat{T} - T_{obs}$ [$\degree$C]')
+        #colorbar(g._mappables[-1])
+        # cmap = sns.color_palette("coolwarm", as_cmap=True)#mpl.cm.cool
+        # norm = mpl.colors.Normalize(vmin=-6.67, vmax=20.41)
+        # fig.colorbar(mpl.cm.ScalarMappable(norm=norm, cmap=cmap),
+        #      ax=last_ax,orientation = 'vertical',
+        #       label='LST - $\hat{T}$ difference [$\degree$C]',shrink=.45)
         fig.colorbar(g._mappables[-1],
                      ax=last_ax,
-                     label='Map temperature $\hat{T}$ [$\degree$C]',
-                     shrink=.45)
+                     label='LST - $\hat{T}$ difference [$\degree$C]',
+                     #label='Map temperature $\hat{T}$ [$\degree$C]',
+                     shrink=.45,ticks=[-5,0,5,10,15,20])
+        #print(g._mappables[-1])
+        # cmap = plt.get_cmap('jet')
+        # #
+        # vmin=-6.67510806  #minimum value to show on colobar
+        # vmax = 20.41673279 #maximum value to show on colobar
+        # norm = mpl.colors.Normalize(vmin=vmin, vmax =vmax)
+        # #generate colors from original colormap in the range equivalent to [vmin, vamx] 
+        # colors = cmap(np.linspace(1.-(vmax-vmin)/float(vmax), 1, cmap.N))
+        # # Create a new colormap from those colors
+        # color_map = mpl.colors.LinearSegmentedColormap.from_list('cut_jet', colors)
+
+        # # create some axes to put the colorbar to
+        # cax, _  = mpl.colorbar.make_axes(plt.gca())
+        # cbar = mpl.colorbar.ColorbarBase(ax = last_ax, cmap=color_map, norm=norm,)
 
     else:
         station_gser = gpd.GeoSeries(
